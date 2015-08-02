@@ -1,5 +1,7 @@
 package cluedo_game;
 
+import cluedo_game.Board.Direction;
+
 /**
  * 
  * @author Tim
@@ -9,13 +11,24 @@ package cluedo_game;
  */
 public class DoorTile extends Tile {
 	
-	public DoorTile(int x, int y) {
+	private Direction dir;
+	
+	public DoorTile(Direction dir, int x, int y) {
 		super(x, y);
+		this.setDirection(dir);
 	}
 
 	@Override
 	public String getIcon() {
 		return " ";
+	}
+
+	public Direction getDirection() {
+		return dir;
+	}
+
+	public void setDirection(Direction dir) {
+		this.dir = dir;
 	}
 
 }

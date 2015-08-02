@@ -22,11 +22,11 @@ public class Board {
 			e.printStackTrace();
 		}
 		
-		int x = 0;
+		int y = 0;
 		
 		/* parse in text file and create board.
 		* Each character is separated by a SPACE
-		* A, B, C, D, E, F, G, I, J = Kitchen, Ball room, Conservatory, Billiard Room, Library, Study, Hall, Lounge, Dining room
+		* A, B, C, D, K, F, G, I, J = Kitchen, Ball room, Conservatory, Billiard Room, Library, Study, Hall, Lounge, Dining room
 		* 1, 2, 3, 4, 5, 6 = Spawns for Mrs White, Rev. Green, Mrs. Peacock, Professor Plum, Miss Scarlet, Colonel Mustard
 		* N, S, E, W are doors facing the specified direction (north, south, easth, west)
 		* Z = 'Swimming pool' ie Center room
@@ -36,23 +36,76 @@ public class Board {
 		while(!sc.hasNextLine()){
 			String line = sc.nextLine();
 
-			for(int y = 0 ; y < line.length(); y++){
-				char c = line.charAt(y);
+			for(int x = 0 ; x < line.length(); x++){
+				char c = line.charAt(x);
 
-				if(c == 'D'){
+				Tile t = null;
+				
+				switch(c) {
+				
+				case 'A' : t = new RoomTile("Kitchen", " KI ", x, y);break;
+				case 'B' : t = new RoomTile("Ball Room", " BA ", x, y);break;
+				case 'C' : t = new RoomTile("Conservatory", " CO ", x, y);break;
+				case 'D' : t = new RoomTile("Billiard Room", " BI ", x, y);break;
+				case 'K' : t = new RoomTile("Library", " LI ", x, y);break;
+				case 'F' : t = new RoomTile("Study", " ST ", x, y);break;
+				case 'G' : t = new RoomTile("Hall", " HA ", x, y);break;
+				case 'I' : t = new RoomTile("Lounge", " LO ", x, y);break;
+				case 'J' : t = new RoomTile("Dining Room", " DI ", x, y);break;
+				
+				case '1' : t = new PlayerTile("Mrs White", "MW", x, y);break;
+				case '2' : t =  new PlayerTile("Rev. Green", "RG", x, y);break;
+				case '3' : t = new PlayerTile("Mrs. Peacock", "MP", x, y);break;
+				case '4' : t = new PlayerTile("Proffessor Plum", "PP", x, y);break;
+				case '5' : t = new PlayerTile("Miss Scarlet", "MS", x, y);break;
+				case '6' : t = new PlayerTile("Colonel Mustard", "CM", x, y);break;
+				
+				case 'N' : t = new DoorTile(Direction.NORTH, x, y) ;break;
+				case 'E' : t = new DoorTile(Direction.EAST, x, y);break;
+				case 'S' : t = new DoorTile(Direction.SOUTH, x, y);break;
+				case 'W' : t = new DoorTile(Direction.WEST, x, y);break;
+				
+				case 'P' : t = new PortalTile("Po", x, y);break;
+				
+				default: t = null ;break;
+				
+				}
+				
+				if(c == 'A'){
 					//tiles[x][y] = new HallTile();
-				}
-				if(c == 'S'){
+				} else if(c == 'B'){
 					//tiles[x][y] = new RoomTile("Kitchen");
-				}
-				if(c == 'F'){
+				} else if(c == 'C'){
 					//tiles[x][y] = new PortalTile();
-				}
-				if(c == 'M'){
+				} else if(c == 'D'){
 					//tiles[x][y] = new DoorTile();
 				}
+				if(c == 'E'){
+					
+				}
+				if(c == 'F'){
+					
+				}
+				if(c == 'G'){
+					
+				}
+				if(c == 'I'){
+					
+				}
+				if(c == 'J'){
+					
+				}
 			}
-
+			
+			y++;
+			
+		}
+		
+		for(int x = 0; x < tiles.length; x++){
+			for(y = 0; y < tiles[x].length; y++){
+				System.out.print(tiles[x][y]);
+			}
+			System.out.println();
 		}
 
 	}
