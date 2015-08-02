@@ -4,7 +4,7 @@ package cluedo_game;
  * 
  * @author Tim
  *
- *Represents a Door in cluedo.  Acts as a tile in all ways except that it is a door.
+ *Represents a Door in cluedo;  Acts as a tile in all ways except that it is a door.
  *
  */
 public class DoorTile extends Tile {

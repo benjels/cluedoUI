@@ -1,7 +1,7 @@
 package cluedo_game;
 
 /**
- * A Tile representation of a player.  Should be passed an icon unique to the players character.
+ * A Tile representation of a player.  Should be passed an icon unique to the players character
  * @author Tim
  *
  */

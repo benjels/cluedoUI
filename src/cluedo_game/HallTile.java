@@ -1,7 +1,7 @@
 package cluedo_game;
 
 /**
- * @author Tim King (300282037(
+ * @author Tim King (300282037)
  * Represents a location in the hallway.
  */
 public class HallTile extends Tile {

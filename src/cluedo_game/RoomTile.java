@@ -3,7 +3,7 @@ package cluedo_game;
 /**
  * @author Tim King (300282037)
  * 
- * Represents a tile in a given room.  
+ * Represents a tile in a given room
  *
  */
 public class RoomTile extends Tile {
