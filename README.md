@@ -12,3 +12,7 @@ There is a problem caused by playing a game in which it is important for players
 Note On Guessing Rules:
 
 I have allowed players as much freedom as possible in the guesses that they can make. Players can repeat already made guesses, guess with suspects that are in their own hand etc because there are strategic reasons for doing these things.
+
+Note On Use Of Cards In Program:
+
+in this program cards do not exist in exactly the same way that they would in the physical version of the game. When a guess is made, we make a three card objects for the suspects that make up that guess. So we can have two instances of the "same" card.
