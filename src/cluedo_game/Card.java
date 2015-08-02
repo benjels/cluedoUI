@@ -1,5 +1,5 @@
 package cluedo_game;
 
-public class Card {
+public abstract class Card {
 
 }
