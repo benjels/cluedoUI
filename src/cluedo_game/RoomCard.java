@@ -8,7 +8,7 @@ package cluedo_game;
  *
  */
 public class RoomCard implements Card {
-	// the Room of this RoomCard
+	// the Room of this RoomCard It is ok to have this enum field publically accessible because our Weapon enum object is immutable and the field is declared as final.
 	public final RoomCard.Room room;
 
 	RoomCard(RoomCard.Room room) {
