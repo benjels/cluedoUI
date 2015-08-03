@@ -20,7 +20,13 @@ public class DoorTile extends Tile {
 
 	@Override
 	public String getIcon() {
-		return " ";
+		switch(dir){
+		case NORTH : return "__";
+		case EAST : return "| ";
+		case WEST : return " |";
+		case SOUTH : return "__";
+		}
+		return "__";
 	}
 
 	public Direction getDirection() {
