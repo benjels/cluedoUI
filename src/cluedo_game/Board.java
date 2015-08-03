@@ -34,13 +34,6 @@ public class Board {
 	 * @param f
 	 */
 	public Board(File f){
-
-		/*Set font.. Make sure it is monospaced*/
-		 StyleContext style = new StyleContext();
-		 
-		 Style defaultStyle = style.getStyle(StyleContext.DEFAULT_STYLE);
-		 final Style mainStyle = style.addStyle("MainStyle", defaultStyle);
-		 StyleConstants.setFontFamily(mainStyle, "Monospaced");
 		
 		System.out.println("Generating board..");
 		
