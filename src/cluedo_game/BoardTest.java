@@ -9,7 +9,7 @@ public class BoardTest {
 	/**
 	 * Test the canMove method in board.
 	 * 
-	 * Mrs. White starts at x=0, y=10
+	 * Mrs. White starts at x=10, y=0
 	 * She should be able to move SOUTH only.
 	 * 
 	 */
