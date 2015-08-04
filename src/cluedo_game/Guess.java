@@ -25,15 +25,26 @@ public class Guess {
 	// can make every turn) or a final guess (which a player can elect to make
 	// only once per game)
 	public final boolean isFinal;
-	
-	
-	
-	Guess(WeaponCard weapon, RoomCard room,
-			CharacterCard character, boolean isFinal) {
+
+	// we need to know who the player is who made this guess
+	private final Player guesser;
+
+	Guess(WeaponCard weapon, RoomCard room, CharacterCard character,
+			boolean isFinal, Player guesser) {
 		this.weaponCard = weapon;
 		this.roomCard = room;
 		this.characterCard = character;
 		this.isFinal = isFinal;
+		this.guesser = guesser;
+	}
+
+	/**
+	 * returns the player for this class
+	 * 
+	 * @return the Player who made this guess
+	 */
+	public Player getPlayer() {
+		return this.guesser;
 	}
 
 }

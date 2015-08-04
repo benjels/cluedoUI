@@ -42,4 +42,18 @@ public class Board {
 		return null;
 	}
 
+
+
+	public void placeGuess(Guess playerGuess) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	public void removeGuess(Guess playerGuess) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

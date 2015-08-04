@@ -2,6 +2,7 @@ package cluedo_game;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -92,14 +93,7 @@ public class Player implements KeyListener{
 		}
 	}
 	
-	@Override
-	public void keyPressed(KeyEvent e) {
-		//NOT USED BUT NECESSARY TO OVERRID THIS METHOD WHEN IMPLEMENTING KEYLISTENER
-	}
-	@Override
-	public void keyTyped(KeyEvent e) {
-		//NOT USED BUT NECESSARY TO OVERRID THIS METHOD WHEN IMPLEMENTING KEYLISTENER
-	}
+
 	
 	
 	@Override
@@ -172,7 +166,7 @@ public class Player implements KeyListener{
 		//create a guess/final guess with the guessed cards provided
 		//pass the guess back to the runGame method so that its weapon can be drawn on the board and
 		//it can be checked against the other players' cards
-		return new Guess(guessedWeaponCard, guessedRoomCard, guessedCharCard, isAccusation);
+		return new Guess(guessedWeaponCard, guessedRoomCard, guessedCharCard, isAccusation, this);
 	}
 	
 	
@@ -197,6 +191,28 @@ public class Player implements KeyListener{
 		return false;
 	}
 	
+	/**
+	 * called when this player is chosen by the game as the refuter and
+	 * we know that this player has card/s which allows him/her to refute
+	 * @param guess the guess that is being refuted
+	 */
+	public void refuteGuess(Guess guess) {
+		//use a helper method to find the cards that we can use to refute the guess
+		ArrayList<? extends Card> refutationCards = getPotentialRefutationCards(guess);
+		//now print the potential cards out and let the user choose
+		//which one they want to refute with
+		Scanner keyboard = new Scanner(System.in);
+		for(int i = 0; i < refutationCards.size(); i ++){
+			System.out.println("to refute with : " + refutationCards.get(i) + " enter the number " + i );
+		}
+		//now get the user's input to decide which card we will refute with
+		Card cardRefute = refutationCards.get(keyboard.nextInt());
+		//we shoould print thisout to everyone from inside this method rather than
+		//sending it back to the game class because this player is making an announcement to the others
+		System.out.println("chose to refute with the card: " + cardRefute.toString());
+	}
+
+	
 	
 	/**
 	 * gets a set of the cards that this player can use to refute a given Guess.
@@ -204,8 +220,8 @@ public class Player implements KeyListener{
 	 * @param guess the combination of cards that were guessed
 	 * @return the subset of cards that are in this player's hand AND the supplied Guess
 	 */
-	public HashSet<? extends Card> getPotentialRefutationCards(Guess guess){
-		HashSet<Card> refutationCards = new HashSet<>();
+	private ArrayList<? extends Card> getPotentialRefutationCards(Guess guess){
+		ArrayList<Card> refutationCards = new ArrayList<>();
 		
 		//traverse the sets of cards in this player's hand and when we find a card that is also present in the 
 		//guess, add it to the set of cards that we will return
@@ -244,7 +260,15 @@ public PlayerTile getTile(){
 	return this.playerTile;
 }
 
-
+//RUBBISH
+@Override
+public void keyPressed(KeyEvent e) {
+	//NOT USED BUT NECESSARY TO OVERRIDE THIS METHOD WHEN IMPLEMENTING KEYLISTENER
+}
+@Override
+public void keyTyped(KeyEvent e) {
+	//NOT USED BUT NECESSARY TO OVERRIDE THIS METHOD WHEN IMPLEMENTING KEYLISTENER
+}
 
 
 
