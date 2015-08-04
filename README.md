@@ -16,3 +16,7 @@ I have allowed players as much freedom as possible in the guesses that they can 
 Note On Use Of Cards In Program:
 
 in this program cards do not exist in exactly the same way that they would in the physical version of the game. When a guess is made, we make a three card objects for the suspects that make up that guess. So we can have two instances of the "same" card.
+
+Note On Guesses/Accusations in a turn:
+
+after a player has moved, they may elect to either make a guess or an accusation. If a player could make a guess and an accusation in the same turn, there would be no need to ever make an accusation without first verifying it with an ordinary guess. That would remove depth from the game.
