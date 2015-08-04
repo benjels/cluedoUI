@@ -22,29 +22,45 @@ public class CharacterCard implements Card {
 	
 	// ENUM FOR UNIQUE CHARACTERS
 	public enum Character {
-		MISSSCARLET("miss scarlet", 1), MRSWHITE("mrs. white", 2), MRSPEACOCK(
-				"mrs peacock", 3), PROFESSORPLUM("professor plum", 4), MRGREEN("mr green", 5), COLONELMUSTARD(
-				"colonel mustard", 6);
+		MISSSCARLET("miss scarlet"), MRSWHITE("mrs. white"), MRSPEACOCK(
+				"mrs peacock"), PROFESSORPLUM("professor plum"), MRGREEN("mr green"), COLONELMUSTARD(
+				"colonel mustard");
 		
 		//each character card has one of these enums as an identifier of which weapon it actually is. These enums also hold a string which is 
 		//just a more readable/user friendly name for that enum value. This is stored in the characterName String field.
 		private String characterName;
-		//each character card needs a code so that we can have the user input a number and have that correspond to a certain character
-		//easier to input a number than to type in a string exactly correct
-		private int code;
-
-		private Character(String character, int code) {
+		//we give each character a starting x and a starting y so we know where to place them on the board
+		private int startX;
+		private int startY;
+		//we give each character a unique ascii char to represent this character on the game board
+		private char icon;
+	
+		private Character(String character, int x, int y, char icon) {
 			this.characterName = character;
-			this.code = code;
+			this.startX = x;
+			this.startY = y;
+			this.icon = icon;
 		}
 
 		public String getString() {
 			return this.characterName;
 		}
 		
-		public int getCode(){
-			return this.code;
+		public int getXStart() {
+			return this.startX;
 		}
+	
+		public int getYStart() {
+			return this.startY;
+		}
+	
+		public char getIcon() {
+			return this.icon;
+		}
+	
+		
+		
+		
 	}
 	//HASHMAP FROM INT --> CHARACTER ENUM
 	//this is useful as it lets the user just enter an integer

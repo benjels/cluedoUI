@@ -109,7 +109,7 @@ public class Game {
 				//after haveMove finally returns then ask the player if they want to guess
 				//STILL NEED TO THINK ABOUT HOW THIS SHOULD WORK:
 				//1) CALL A MAKEGUESS() METHOD ON EACH PLAYER IN LIST
-				//2)MANAGE IT IN HERE
+				//
 				//IMO BEST TO CALL A MAKEGUESS() METHOD INSIDE THE PLAYER'S CLASS THAT RETURNS A GUESS
 				//TO THIS METHOD WHICH THEN GOES THROUGH ALL OF OTHER PLAYERS IN THE PLAYER LIST AND 
 				//CHECKS THE GUESS AGAINST THE CARDS THEY HAVE USING THEIR CHECK GUESS METHODS
@@ -118,7 +118,13 @@ public class Game {
 				//I THINK THAT WAY IS BEST BECAUSE THEN THE ONLY INPUT THAT IS COMING INTO THE GAME IS THROUGH THE PLAYER/CONTROLLER
 				//APART FROM THE SETUP INPUT WHICH CAN BE THOUGHT OF AS THE "GAME MASTER" OR S/T
 				
+				//pass the guess to the board so the weapon can be drawn on the board
 				
+				
+				//process the guess through all of the players checking if they can refute etc
+				
+				
+				//pass the guess to the board so the weapon can be erased from the board
 				
 				
 				

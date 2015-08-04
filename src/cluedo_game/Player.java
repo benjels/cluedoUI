@@ -3,6 +3,7 @@ package cluedo_game;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.Scanner;
 
 /**
  * represents a player in the cluedo game NOT A CHARACTER!. Player's have a name, the cards that they are dealt at the start of the game
@@ -70,9 +71,10 @@ public class Player implements KeyListener{
 	 * by one tile.
 	 * @param distanceRemaining the amount of tiles that the player must still move by
 	 */
-	public void haveMove(int distanceRemaining){
+	public void decideMove(int distanceRemaining){
 		//set canMove to true
 		this.canMove = true;
+		System.out.println("use one of the arroykeys to make a move");
 		//wait until canMove set to false by keyReleased when a move key pressed
 		while(!this.canMove){
 			try {
@@ -85,7 +87,7 @@ public class Player implements KeyListener{
 		if(distanceRemaining == 1){
 			return;
 		}else{//in case that we didn't just use the final move
-			haveMove(distanceRemaining - 1);
+			decideMove(distanceRemaining - 1);
 			return;
 		}
 	}
@@ -126,9 +128,54 @@ public class Player implements KeyListener{
 	
 	
 	
-	
+	//TODO:  decide whether non guesses will be null or some nullGuess that extends Guess.
 	
 	//GUESSING:
+	/**
+	 * manages a player's guess/accusation
+	 * a player can either make no guess or accusation, make a guess, or make an accusation.
+	 * THe player's guess is then passed back to the runGame method so that the weapon token from
+	 * this guess can be displayed on the board and the guess can be checked against the cards of 
+	 * the other players
+	 * @return the guess that this player has made OR NULL IF NO GUESS MADE
+	 */
+	public Guess decideGuess(){
+		//give the player their options
+		Scanner keyboard = new Scanner(System.in);
+		System.out.println("Your moving is over and now you can elect to make a guess or an accusation... \n");
+		System.out.println("press 1 for no guess, 2 for guess and 3 for accusation");
+		//decide which kind of guess
+		boolean isAccusation = false;
+		if(keyboard.nextInt() == 1){
+			return null; //!!! null as a value
+		}else if(keyboard.nextInt() == 2){
+			isAccusation = false;
+		}else if(keyboard.nextInt() == 3){
+			isAccusation = true;
+		}else{
+			throw new RuntimeException("that input is not an allowed type of accusation");
+		}
+		//prompt the player to guess which three "suspects" they wish to guess
+		//build a card from each suspect enum that is chosen
+		//get guessed character
+		System.out.println("choose a character to guess: 1 -6 for characters");
+		CharacterCard.Character guessedChar = CharacterCard.intToCharacter.get(keyboard.nextInt());
+		CharacterCard guessedCharCard = new CharacterCard(guessedChar);
+		//get guessed location
+		System.out.println("choose a room to guess: 1 - 9 for rooma");
+		RoomCard.Room guessedRoom = RoomCard.intToRoom.get(keyboard.nextInt());
+		RoomCard guessedRoomCard = new RoomCard(guessedRoom);
+		//get guessed weapon
+		System.out.println("choose a weapon to guess: 1 - 8 for weapons");
+		WeaponCard.Weapon guessedWeapon = WeaponCard.intToWeapon.get(keyboard.nextInt());
+		WeaponCard guessedWeaponCard = new WeaponCard(guessedWeapon);
+		//create a guess/final guess with the guessed cards provided
+		//pass the guess back to the runGame method so that its weapon can be drawn on the board and
+		//it can be checked against the other players' cards
+		return new Guess(guessedWeaponCard, guessedRoomCard, guessedCharCard, isAccusation);
+	}
+	
+	
 	
 	/**
 	 * checks whether this Player, given a certain Guess, is able to refute that Guess
@@ -186,7 +233,16 @@ public class Player implements KeyListener{
 
 
 
-
+//UTILITY
+/**
+ * used to get the tile of this player which
+ * has the player's current position on the board a well as
+ * who their character is
+ * @return the player's tile
+ */
+public PlayerTile getTile(){
+	return this.playerTile;
+}
 
 
 

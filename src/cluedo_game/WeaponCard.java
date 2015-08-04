@@ -1,5 +1,7 @@
 package cluedo_game;
 
+import java.util.HashMap;
+
 /**
  * each instance represents a different one of the weapon cards. The actual weapon
  * name is stored as a string in an enum that is defined within this class.
@@ -36,4 +38,22 @@ public class WeaponCard implements Card {
 		}
 	}
 
+	
+	
+	//HASHMAP FROM INT --> WEAPON ENUM
+	//this is useful as it lets the user just enter an integer
+	//to show what they want. Much easier to type in a single char
+	//number than a string.
+	public static final HashMap<Integer, WeaponCard.Weapon> intToWeapon = new HashMap<>();
+	static {
+	    intToWeapon.put(1,WeaponCard.Weapon.AXE);
+	    intToWeapon.put(2,WeaponCard.Weapon.CANLESTICK);
+	    intToWeapon.put(3,WeaponCard.Weapon.KNIFE);
+	    intToWeapon.put(4,WeaponCard.Weapon.LEADPIPE);
+	    intToWeapon.put(5,WeaponCard.Weapon.POISON);
+	    intToWeapon.put(6,WeaponCard.Weapon.REVOLVER);
+	    intToWeapon.put(7,WeaponCard.Weapon.ROPE);
+	    intToWeapon.put(8,WeaponCard.Weapon.WRENCH);
+
+	}
 }
