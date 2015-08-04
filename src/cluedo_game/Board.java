@@ -243,6 +243,10 @@ public class Board {
 		
 	}
 	
+	/**
+	 * Places a guess on the board - the Weapon of the guess is sent to the room the guess is in.
+	 * @param guess
+	 */
 	public void placeGuess(Guess guess){
 		Room r = guess.roomCard.room;
 		
@@ -259,6 +263,10 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Removes the visual component of a guess from the board.
+	 * @param guess
+	 */
 	public void removeGuess(Guess guess){
 		
 		for(int x = 0; x < tiles.length; x++){
