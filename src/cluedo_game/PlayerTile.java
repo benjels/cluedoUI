@@ -9,7 +9,7 @@ public class PlayerTile extends Tile {
 
 	private String icon;
 	
-	public PlayerTile(String icon, int x, int y) {
+	public PlayerTile(CharacterCard.Character character) {
 		super(x, y);
 		this.icon = icon;
 	}

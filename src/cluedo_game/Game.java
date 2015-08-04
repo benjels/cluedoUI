@@ -29,7 +29,7 @@ public class Game {
 	// list of players in the game
 	private ArrayList<Player> players = new ArrayList<>();
 	// the "deck" of cards which is always the same
-	private final HashSet<Card> deck;
+	private final ArrayList<Card> deck;
 
 	/**
 	 * carries out a few setup tasks for the game -puts all the cards in the
@@ -39,25 +39,49 @@ public class Game {
 	 */
 	Game(){
 		//put cards in deck
-		deck = new HashSet<Card>(Arrays.asList(new CharacterCard(CharacterCard.Character.COLONELMUSTARD), new  CharacterCard(CharacterCard.Character.MISSSCARLET), new  CharacterCard(CharacterCard.Character.MRGREEN), new CharacterCard(CharacterCard.Character.MRSPEACOCK), new CharacterCard(CharacterCard.Character.MRSWHITE), new CharacterCard(CharacterCard.Character.PROFESSORPLUM), new WeaponCard(WeaponCard.Weapon.AXE), new WeaponCard(WeaponCard.Weapon.CANLESTICK), new WeaponCard(WeaponCard.Weapon.KNIFE), new WeaponCard(WeaponCard.Weapon.LEADPIPE), new WeaponCard(WeaponCard.Weapon.POISON), new WeaponCard(WeaponCard.Weapon.REVOLVER), new WeaponCard(WeaponCard.Weapon.ROPE), new WeaponCard(WeaponCard.Weapon.WRENCH), new RoomCard(RoomCard.Room.BALLROOM), new RoomCard(RoomCard.Room.BILLIARDROOM), new RoomCard(RoomCard.Room.CONSERVATORY), new RoomCard(RoomCard.Room.DININGROOM), new RoomCard(RoomCard.Room.HALL), new RoomCard(RoomCard.Room.KITCHEN), new RoomCard(RoomCard.Room.LIBRARY), new RoomCard(RoomCard.Room.LOUNGE), new RoomCard(RoomCard.Room.STUDY)));
+		deck = new ArrayList<Card>(Arrays.asList(new CharacterCard(CharacterCard.Character.COLONELMUSTARD), new  CharacterCard(CharacterCard.Character.MISSSCARLET), new  CharacterCard(CharacterCard.Character.MRGREEN), new CharacterCard(CharacterCard.Character.MRSPEACOCK), new CharacterCard(CharacterCard.Character.MRSWHITE), new CharacterCard(CharacterCard.Character.PROFESSORPLUM), new WeaponCard(WeaponCard.Weapon.AXE), new WeaponCard(WeaponCard.Weapon.CANLESTICK), new WeaponCard(WeaponCard.Weapon.KNIFE), new WeaponCard(WeaponCard.Weapon.LEADPIPE), new WeaponCard(WeaponCard.Weapon.POISON), new WeaponCard(WeaponCard.Weapon.REVOLVER), new WeaponCard(WeaponCard.Weapon.ROPE), new WeaponCard(WeaponCard.Weapon.WRENCH), new RoomCard(RoomCard.Room.BALLROOM), new RoomCard(RoomCard.Room.BILLIARDROOM), new RoomCard(RoomCard.Room.CONSERVATORY), new RoomCard(RoomCard.Room.DININGROOM), new RoomCard(RoomCard.Room.HALL), new RoomCard(RoomCard.Room.KITCHEN), new RoomCard(RoomCard.Room.LIBRARY), new RoomCard(RoomCard.Room.LOUNGE), new RoomCard(RoomCard.Room.STUDY)));
 		assert(deck.size() == (9 + 8 + 6)): "made an error when forming deck its the worng size";
-		//create board from specified file
-		this.board = new Board(new File("board.txt")); ///!!! need to think about how this file directory system is gonna work
 		//create players with correct names/characters
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("ENTER PLAYER AMOUNT"); 
+		System.out.println("ENTER PLAYER AMOUNT \n"); 
 		int playerAmount = keyboard.nextInt();
 		for(int i = 0; i < playerAmount; i++){
-			System.out.println("Player " + (i + 1) + " please enter your name"); 
+			//get this player's name
+			System.out.println("Player " + (i + 1) + " please enter your name \n"); 
 			String name = keyboard.next();
-			System.out.println(name + " please choose your character"); 
-			String character = keyboard.next(); need to talk about how we are going to do this. imo best is to always just print out options and then let the user choose an option by typing in a number, Do movement this way too but maybe givea arrowkey support via a keylistener (dont worry about key listener for now th)
-			
+			//let this player choose a character
+			System.out.println(name + " please choose your character by entering the corresponding number: \n 1 = miss scarlet \n 2 = mrs. white \n 3 = mrs peacock \n 4 = professor plum \n 5 = mr green \n 6 = colonel mustard"); 
+			int character = keyboard.nextInt(); //TODO: manage exception/check that input is int. CONSIDER A SMALL HELPER METHOD OR WHILE LOOP THAT CHECKS THAT IT IS INT AND : WHILE NEXT NOT INT, PROMPT USER TO ENTER ANOTHER THING
+			//create this character's tile and then create this player's Player object
+			CharacterCard.Character playersChar = CharacterCard.intToCharacter.get(character);
+			PlayerTile tile = new PlayerTile(playersChar);//!!! the playertile constructor should return a tile that is dependent on the character given as an argument
+			//finally create the actual Player with the tile/name and add it to player list
+			Player currentPlayer = new Player(name, tile);
+			this.players.add(currentPlayer);
 		}
 		//deal cards from deck to players
+		//essentially we traverse the deck of cards and proceed to a new player for each card
+		// because there are more cards than players, we need to "wrap around" to the start of the list
+		//of players when we reach its end
+		int playerToReceive = 0;
+		int lastPlayer = this.players.size() - 1;
+		for(int i = 0; i < deck.size(); i++){
+			//give current card to current player
+			this.players.get(playerToReceive).receiveCard(deck.get(i));
+			//if we just dealt to the "last player" wrap the player counter around
+			//else just increment it
+			if(playerToReceive == lastPlayer){
+				playerToReceive = 0;
+			}else{
+				playerToReceive ++;
+			}	
+		}
+		//create board from specified file and the players that we have now made
+		this.board = new Board(new File("board.txt"), this.players); ///!!! need to think about how this file directory system is gonna work
 		
-		
-		//call rungame method
+		//we have set up the players, given them their cards and tile and set up the board 
+		//now we are ready to run the game
+		runGame();
 	}
 
 	/**
@@ -72,7 +96,38 @@ public class Game {
 	 * check possible refutations from the other players.
 	 */
 	private void runGame() {
-
+		boolean gameOver = false;
+		//just loop through the players' turns until the game is over
+		while(!gameOver){
+			for(Player eachPlayer: this.players){
+				//first roll the dice
+				
+				//pass diceroll to player's haveMove method which passes moves through
+				//this class' sendMove method
+				
+				
+				//after haveMove finally returns then ask the player if they want to guess
+				//STILL NEED TO THINK ABOUT HOW THIS SHOULD WORK:
+				//1) CALL A MAKEGUESS() METHOD ON EACH PLAYER IN LIST
+				//2)MANAGE IT IN HERE
+				//IMO BEST TO CALL A MAKEGUESS() METHOD INSIDE THE PLAYER'S CLASS THAT RETURNS A GUESS
+				//TO THIS METHOD WHICH THEN GOES THROUGH ALL OF OTHER PLAYERS IN THE PLAYER LIST AND 
+				//CHECKS THE GUESS AGAINST THE CARDS THEY HAVE USING THEIR CHECK GUESS METHODS
+				//COULD MAYBE HAVE THAT METHOD RETURN A NULL OR EQUIVALENT IF THE PLAYER ELECTS TO NOT MAKE A
+				//GUESS
+				//I THINK THAT WAY IS BEST BECAUSE THEN THE ONLY INPUT THAT IS COMING INTO THE GAME IS THROUGH THE PLAYER/CONTROLLER
+				//APART FROM THE SETUP INPUT WHICH CAN BE THOUGHT OF AS THE "GAME MASTER" OR S/T
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+		}
+		System.out.println("GAME OVER");
 	}
 
 	// !!!REMEMBER THAT THERE ARE 2 GAME OVER CONDITIONS
