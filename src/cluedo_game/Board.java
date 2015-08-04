@@ -1,7 +1,10 @@
 package cluedo_game;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
+
+import cluedo_game.RoomCard.Room;
 
 /**
  * A board from the game Cluedo.  
@@ -29,12 +32,20 @@ public class Board {
 	 * Constructs a board given a formatted text representation of the Cluedo board.
 	 * @param f
 	 */
-	public Board(File f){
+	public Board(File f, List<Player> players){
 		
 		System.out.println("Generating board..");
 		
 		tiles = new Tile[w][h];
 		originalBoard = new Tile[w][h];
+		
+		for(int i = 1; i <= 6; i++){
+			
+			for(Player player : players){
+				player.getTile().getCharacter();
+			}
+		}
+		
 		
 		Scanner sc = null;
 		try {
@@ -67,22 +78,23 @@ public class Board {
 				
 				switch(c) {
 				
-				case 'A' : t = new RoomTile("Kitchen", "KI", x, y);break;
-				case 'B' : t = new RoomTile("Ball Room", "BA", x, y);break;
-				case 'C' : t = new RoomTile("Conservatory", "CO", x, y);break;
-				case 'D' : t = new RoomTile("Billiard Room", "BI", x, y);break;
-				case 'K' : t = new RoomTile("Library", "LI", x, y);break;
-				case 'F' : t = new RoomTile("Study", "ST", x, y);break;
-				case 'G' : t = new RoomTile("Hall", "HA", x, y);break;
-				case 'I' : t = new RoomTile("Lounge", "LO", x, y);break;
-				case 'J' : t = new RoomTile("Dining Room", "DI", x, y);break;
+				case 'A' : t = new RoomTile(Room.KITCHEN, "KI", x, y);break;
+				case 'B' : t = new RoomTile(Room.BALLROOM, "BA", x, y);break;
+				case 'C' : t = new RoomTile(Room.CONSERVATORY, "CO", x, y);break;
+				case 'D' : t = new RoomTile(Room.BILLIARDROOM, "BI", x, y);break;
+				case 'K' : t = new RoomTile(Room.LIBRARY, "LI", x, y);break;
+				case 'F' : t = new RoomTile(Room.STUDY, "ST", x, y);break;
+				case 'G' : t = new RoomTile(Room.HALL, "HA", x, y);break;
+				case 'I' : t = new RoomTile(Room.LOUNGE, "LO", x, y);break;
+				case 'J' : t = new RoomTile(Room.DININGROOM, "DI", x, y);break;
 				
-				case '1' : t = new PlayerTile("Mrs White", " 1", x, y);break;
-				case '2' : t =  new PlayerTile("Rev. Green", " 2", x, y);break;
-				case '3' : t = new PlayerTile("Mrs. Peacock", " 3", x, y);break;
-				case '4' : t = new PlayerTile("Proffessor Plum", " 4", x, y);break;
-				case '5' : t = new PlayerTile("Miss Scarlet", " 5", x, y);break;
-				case '6' : t = new PlayerTile("Colonel Mustard", " 6", x, y);break;
+				
+				case '1' : System.out.println("MRS WHITE: " + x + " , " + y) ;break;
+				case '2' :  System.out.println("Rev. Green" + x + " , " + y);break;
+				case '3' : System.out.println("Mrs. Peacock" + x + " , " + y);break;
+				case '4' : System.out.println("Proffessor Plum" + x + " , " + y);break;
+				case '5' :  System.out.println("Miss Scarlet" + x + " , " + y);break;
+				case '6' : System.out.println("Colonel Mustard" + x + " , " + y);break;
 				
 				case 'N' : t = new DoorTile(Direction.NORTH, x, y) ;break;
 				case 'E' : t = new DoorTile(Direction.EAST, x, y);break;
@@ -93,7 +105,7 @@ public class Board {
 				
 				case 'H' : t = new HallTile(x, y); break;
 				
-				case 'Z' : t = new RoomTile("Swimming pool", "SP", x, y); break;
+				case 'Z' : t = new RoomTile(null, "SP", x, y); break;
 				
 				
 				default: t = null ;break;
@@ -108,6 +120,11 @@ public class Board {
 			y++;
 			
 		}
+		
+		for(Player p : players){
+			tiles[p.getTile().getX()][p.getTile().getY()] = p.getTile();
+		}
+		
 	}
 
 	/**
@@ -200,28 +217,57 @@ public class Board {
 		return new Tile[] {tiles[x-1][y-1], tiles[x][y-1], tiles[x+1][y-1], tiles[x-1][y], tiles[x+1][y], tiles[x-1][y+1], tiles[x][y+1], tiles[x+1][y+1]};
 	}
 	
+	
 	/**
-	 * Gets the room the given tile is in, or "hallway" if not in a room.
+	 * Gets the room the given tile is in, or null if not in a room.
 	 * @param loc Tile to check
 	 * @return The name of the room the tile is in, in lower case.  e.g "conservatory"
 	 */
-	public String getRoom(Tile loc){
+	public Room getRoom(Tile loc){
 		
 		Tile original = originalBoard[loc.getX()][loc.getY()];
 		
 		if(original instanceof RoomTile){
-			return ((RoomTile)original).getRoomName().toLowerCase();
+			return ((RoomTile)original).getRoom();
 		}
 		
 		if(original instanceof DoorTile){
 			for(Tile t : getTilesSurrounding(loc)){
 				if(t instanceof RoomTile){
-					return ((RoomTile)t).getRoomName().toLowerCase();
+					return ((RoomTile)t).getRoom();
 				}
 			}
 		}
 		
-		return "hallway";
+		return null;
+		
+	}
+	
+	public void placeGuess(Guess guess){
+		Room r = guess.roomCard.room;
+		
+		//Find a tile to put the weapon in..
+		for(int x = 0; x < tiles.length; x++){
+			for(int y = 0; y < tiles[x].length; y++){
+				if(tiles[x][y] instanceof RoomTile){
+					RoomTile tile = (RoomTile)tiles[x][y];
+					if(tile.getRoom().equals(r)){
+						tiles[x][y] = new WeaponTile(guess.weaponCard.weapon, "^-", x, y);
+					}
+				}
+			}
+		}
+	}
+	
+	public void removeGuess(Guess guess){
+		
+		for(int x = 0; x < tiles.length; x++){
+			for(int y = 0; y < tiles[x].length; y++){
+				if(tiles[x][y] instanceof WeaponTile){
+					tiles[x][y] = originalBoard[x][y];
+				}
+			}
+		}
 		
 	}
 
@@ -256,12 +302,6 @@ public class Board {
 			}
 			System.out.println();
 		}
-	}
-
-	public enum Room {
-
-		KITCHEN; //whatever else TODO
-
 	}
 
 	/**

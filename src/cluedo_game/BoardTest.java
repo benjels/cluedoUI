@@ -1,6 +1,7 @@
 package cluedo_game;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import cluedo_game.Board.Direction;
 
@@ -45,17 +46,21 @@ public class BoardTest {
 	}
 	
 	public static void test(){
-		Board b = new Board(new File("board.txt"));
+		Board b = new Board(new File("board.txt"), new ArrayList<Player>());
 		//moveCheckTest(b);
 		//tileDirectionTest(b);
 		b.draw();
+		//System.out.println("\nMoving MW south\n");
+		//moveTest(b, 13, 17);
+		//b.draw();
 		System.out.println("\nMoving MW south\n");
-		moveTest(b, 13, 17);
-		b.draw();
-		System.out.println("\nMoving MW south\n");
-		moveTest(b, 13, 18);
-		b.draw();
-		System.out.println(b.getRoom(new HallTile(13, 19)));
+		//moveTest(b, 13, 18);
+		//b.draw();
+		//System.out.println(b.getRoom(new HallTile(13, 19)));
+	}
+	
+	public static void main(String[] args){
+		test();
 	}
 	
 }
