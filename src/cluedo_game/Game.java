@@ -182,7 +182,7 @@ public class Game {
 		while (!gameOver) {
 			for (Player eachPlayer : this.players) {
 				// first roll the dice
-				int diceRoll = 3;
+				int diceRoll = 6;
 				// give the distance that this player rolled to the players
 				// decideMove
 				eachPlayer.decideMove(diceRoll);
