@@ -9,6 +9,7 @@ import cluedo_game.CharacterCard.Character;
 public class Board {
 
 	public enum Direction {
+		EAST, NORTH, WEST, SOUTH
 
 	}
 

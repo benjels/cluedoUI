@@ -31,12 +31,16 @@ public class Player implements KeyListener{
 	//if a player is able to make a move, this is set to true and the key listener is "allowed"
 	private boolean canMove = false;
 	
+	//we need to store the game because we need to pass moves through it
+	private final Game game;
+	
 	
 	//SETUP
 	
-	Player(String name, PlayerTile tile){
+	Player(String name, PlayerTile tile, Game game){
 		this.playerName = name;
 		this.playerTile = tile;
+		this.game = game;
 	}
 	
 	/**
@@ -104,13 +108,17 @@ public class Player implements KeyListener{
 		//TODO: make this method --> makeMove -->checkmove/move mvc chain thing that passes a tile down the chain and then back
 		int code = e.getKeyCode();
 		if((this.canMove) && (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_KP_RIGHT)) {			
-			System.out.println("just moved up one space or attempted to");
+			System.out.println("just moved right one space or attempted to");
+			game.sendMove(playerTile, Board.Direction.EAST);
 		} else if((this.canMove) && (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_KP_LEFT)) {
 			System.out.println("just moved left space or attempted to");
+			game.sendMove(playerTile, Board.Direction.WEST);
 		} else if((this.canMove) && (code == KeyEvent.VK_UP)) {
-			System.out.println("just moved right space or attempted to");
+			System.out.println("just moved up space or attempted to");
+			game.sendMove(playerTile, Board.Direction.NORTH);
 		} else if((this.canMove) && (code == KeyEvent.VK_DOWN)) {
 			System.out.println("just moved down one space or attempted to");
+			game.sendMove(playerTile, Board.Direction.SOUTH);
 		}
 	}
 	

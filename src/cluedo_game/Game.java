@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -91,7 +92,7 @@ public class Game {
 			PlayerTile tile = new PlayerTile(playersChar);
 			// finally create the actual Player with the tile/name and add it to
 			// player list
-			Player currentPlayer = new Player(name, tile);
+			Player currentPlayer = new Player(name, tile, this);
 			this.players.add(currentPlayer);
 		}
 		//before we deal the cards to the players we should get one card of each type
@@ -182,7 +183,8 @@ public class Game {
 		while (!gameOver) {
 			for (Player eachPlayer : this.players) {
 				// first roll the dice
-				int diceRoll = 6;
+				Random ran = new Random();
+				int diceRoll = ran.nextInt(5) + 1;
 				// give the distance that this player rolled to the players
 				// decideMove
 				eachPlayer.decideMove(diceRoll);
