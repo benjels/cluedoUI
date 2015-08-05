@@ -12,7 +12,7 @@ public class HallTile extends Tile {
 
 	public String getIcon() {
 		
-		return "[ ]";
+		return "  ";
 	}
 	
 }
