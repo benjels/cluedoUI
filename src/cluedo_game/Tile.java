@@ -2,7 +2,7 @@ package cluedo_game;
 
 /**
  * A simple abstract Tile class that represents an x and y coordinate
- * @author Tim King (300282037)
+ * @author Tim King
  */
 public abstract class Tile {
 
