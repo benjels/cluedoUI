@@ -30,6 +30,12 @@ public class Game {
 	private ArrayList<Player> players = new ArrayList<>();
 	// the "deck" of cards which is always the same
 	private final ArrayList<Card> deck;
+	//the three cards that, when they are accused, win the game
+	//contains one card of each type 
+	//Note that it is actually not necessary to access these cards because
+	//we can prove that a guess is correct by verifying that none of the 
+	//other players can disprove that guessaaaaa
+	private final ArrayList<Card> winningCards;
 
 	/**
 	 * carries out a few setup tasks for the game -puts all the cards in the
@@ -77,30 +83,47 @@ public class Game {
 			System.out
 					.println(name
 							+ " please choose your character by entering the corresponding number: \n 1 = miss scarlet \n 2 = mrs. white \n 3 = mrs peacock \n 4 = professor plum \n 5 = mr green \n 6 = colonel mustard");
-			int character = keyboard.nextInt(); // TODO: manage exception/check
-												// that input is int. CONSIDER A
-												// SMALL HELPER METHOD OR WHILE
-												// LOOP THAT CHECKS THAT IT IS
-												// INT AND : WHILE NEXT NOT INT,
-												// PROMPT USER TO ENTER ANOTHER
-												// THING
+			int character = keyboard.nextInt(); 
 			// create this character's tile and then create this player's Player
 			// object
 			CharacterCard.Character playersChar = CharacterCard.intToCharacter
 					.get(character);
-			PlayerTile tile = new PlayerTile(playersChar);// !!! the playertile
-															// constructor
-															// should return a
-															// tile that is
-															// dependent on the
-															// character given
-															// as an argument
+			PlayerTile tile = new PlayerTile(playersChar);
 			// finally create the actual Player with the tile/name and add it to
 			// player list
 			Player currentPlayer = new Player(name, tile);
 			this.players.add(currentPlayer);
 		}
-		// deal cards from deck to players
+		//before we deal the cards to the players we should get one card of each type
+		//and store these as the winning combination
+		boolean weapFound = false;
+		boolean roomFound = false;
+		boolean charFound = false;
+		WeaponCard weap = null;
+		RoomCard room = null;
+		CharacterCard chara = null;
+		for(int i = 0; i < deck.size(); i ++){
+			if((deck.get(i) instanceof WeaponCard) && (!weapFound)){
+				//then we found murder weapon
+				weap = (WeaponCard) deck.get(i);
+				weapFound = true;
+			}
+			if((deck.get(i) instanceof RoomCard) && (!roomFound)){
+				//then we found murder location
+				room = (RoomCard) deck.get(i);
+				roomFound = true;
+			}
+			if((deck.get(i) instanceof CharacterCard) && (!charFound)){
+				//then we found murderer
+				chara = (CharacterCard) deck.get(i);
+				charFound = true;
+			}
+		}
+		//we now have one card of each kind then put them aside
+		this.winningCards = new ArrayList<Card>(Arrays.asList(weap, room, chara));
+		//and delete them from the deck
+		this.deck.removeAll(Arrays.asList(weap, room, chara));
+		// now we deal cards from deck to players
 		// essentially we traverse the deck of cards and proceed to a new player
 		// for each card
 		// because there are more cards than players, we need to "wrap around"
