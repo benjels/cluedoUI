@@ -17,7 +17,7 @@ public class PlayerTile extends Tile {
 	}
 
 	public String getIcon() {
-		return icon;
+		return String.valueOf(character.getIcon());
 	}
 
 	public CharacterCard.Character getCharacter() {
