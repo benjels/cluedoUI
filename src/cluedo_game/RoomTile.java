@@ -1,5 +1,7 @@
 package cluedo_game;
 
+import cluedo_game.RoomCard.Room;
+
 /**
  * @author Tim King (300282037)
  * 
@@ -8,7 +10,7 @@ package cluedo_game;
  */
 public class RoomTile extends Tile {
 
-	private String room;
+	private Room room;
 	private String icon;
 	
 	/**
@@ -18,14 +20,10 @@ public class RoomTile extends Tile {
 	 * @param x
 	 * @param y
 	 */
-	public RoomTile(String room, String icon, int x, int y) {
+	public RoomTile(Room room, String icon, int x, int y) {
 		super(x, y);
 		this.room=room;
 		this.icon=icon;
-	}
-
-	public String getRoomName(){
-		return room;
 	}
 	
 	@Override
@@ -34,4 +32,9 @@ public class RoomTile extends Tile {
 		return icon;
 	}
 
+	public Room getRoom() {
+		return room;
+	}
+
 }
+
