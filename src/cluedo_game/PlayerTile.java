@@ -8,9 +8,9 @@ package cluedo_game;
 public class PlayerTile extends Tile {
 
 	private String icon;
-	private String character;
+	private CharacterCard.Character character;
 	
-	public PlayerTile(String character, String icon, int x, int y) {
+	public PlayerTile(CharacterCard.Character character, String icon, int x, int y) {
 		super(x, y);
 		this.icon = icon;
 		this.setCharacter(character);
@@ -20,11 +20,11 @@ public class PlayerTile extends Tile {
 		return icon;
 	}
 
-	public String getCharacter() {
+	public CharacterCard.Character getCharacter() {
 		return character;
 	}
 
-	public void setCharacter(String character) {
+	public void setCharacter(CharacterCard.Character character) {
 		this.character = character;
 	}
 }
