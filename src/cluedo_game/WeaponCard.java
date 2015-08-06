@@ -16,8 +16,24 @@ public class WeaponCard implements Card {
 	WeaponCard(WeaponCard.Weapon weapon) {
 		this.weapon = weapon;
 	}
+	@Override
+	 public boolean equals(Object o){
+	  if(o instanceof WeaponCard){
+	   WeaponCard card = (WeaponCard)o;
+	   return card.weapon.equals(this.weapon);
+	  }
+	  return false;
+	 }
 
-
+	
+	@Override
+	 public int hashCode(){
+	  return this.weapon.hashCode();
+	 }
+	@Override
+	public String toString(){
+		return "Weapon Card: " + weapon.weaponName;
+	}
 	
 	// ENUM FOR UNIQUE WEAPONS
 	public enum Weapon {
@@ -37,8 +53,6 @@ public class WeaponCard implements Card {
 			return this.weaponName;
 		}
 	}
-
-	
 	
 	//HASHMAP FROM INT --> WEAPON ENUM
 	//this is useful as it lets the user just enter an integer

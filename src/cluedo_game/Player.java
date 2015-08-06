@@ -13,7 +13,7 @@ import java.util.Scanner;
  * @author Max
  *
  */
-public class Player implements KeyListener{
+public class Player{
 	
 	
 	// each player has a set for each of the three kinds of cards (essentially their "hand"). This could have been implemented as a some public final fields, but i
@@ -28,11 +28,10 @@ public class Player implements KeyListener{
 	//each player has a tile which holds information about their character in the game
 	private PlayerTile playerTile;
 	
-	//if a player is able to make a move, this is set to true and the key listener is "allowed"
-	private boolean canMove = false;
-	
 	//we need to store the game because we need to pass moves through it
 	private final Game game;
+	//we need to know whether the player is still in the game
+	private boolean hasLost = false;
 	
 	
 	//SETUP
@@ -77,16 +76,21 @@ public class Player implements KeyListener{
 	 * @param distanceRemaining the amount of tiles that the player must still move by
 	 */
 	public void decideMove(int distanceRemaining){
-		//set canMove to true
-		this.canMove = true;
-		System.out.println("use one of the arroykeys to make a move");
+		System.out.println(this.playerName + ": enter one of the directions to move (up, down, left, right). Your piece is: " + this.playerTile.getIcon() + " you have : " + distanceRemaining + " moves remaining");
 		//wait until canMove set to false by keyReleased when a move key pressed
-		while(!this.canMove){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		Scanner keyBoard = new Scanner(System.in);
+		String temp = keyBoard.next();
+		if(temp.equals("up")){
+			System.out.println("DEBUG from player");
+			this.playerTile = this.game.sendMove(this.playerTile, Board.Direction.NORTH);
+		}else if(temp.equals("down")){
+			this.playerTile = this.game.sendMove(this.playerTile, Board.Direction.SOUTH);
+		}else if(temp.equals("left")){
+			this.playerTile = this.game.sendMove(this.playerTile, Board.Direction.WEST);
+		}else if(temp.equals("right")){
+			this.playerTile = this.game.sendMove(this.playerTile, Board.Direction.EAST);
+		}else{
+			throw new RuntimeException("must be one of those");
 		}
 		//if there is still distance remaining in this move, recursively call this method
 		if(distanceRemaining == 1){
@@ -100,27 +104,6 @@ public class Player implements KeyListener{
 
 	
 	
-	@Override
-	public void keyReleased(KeyEvent e) {
-		//depending on which key is pressed AND whether haveMove is set to true,
-		//send a direction and this player's tile to the makeMove methodin Game which in turn calls checkmove/move in board MVC yee
-		//MUST SET this.canMove to false after one move sent to Game
-		//TODO: make this method --> makeMove -->checkmove/move mvc chain thing that passes a tile down the chain and then back
-		int code = e.getKeyCode();
-		if((this.canMove) && (code == KeyEvent.VK_RIGHT || code == KeyEvent.VK_KP_RIGHT)) {			
-			System.out.println("just moved right one space or attempted to");
-			game.sendMove(playerTile, Board.Direction.EAST);
-		} else if((this.canMove) && (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_KP_LEFT)) {
-			System.out.println("just moved left space or attempted to");
-			game.sendMove(playerTile, Board.Direction.WEST);
-		} else if((this.canMove) && (code == KeyEvent.VK_UP)) {
-			System.out.println("just moved up space or attempted to");
-			game.sendMove(playerTile, Board.Direction.NORTH);
-		} else if((this.canMove) && (code == KeyEvent.VK_DOWN)) {
-			System.out.println("just moved down one space or attempted to");
-			game.sendMove(playerTile, Board.Direction.SOUTH);
-		}
-	}
 	
 	
 	
@@ -130,7 +113,7 @@ public class Player implements KeyListener{
 	
 	
 	
-	//TODO:  decide whether non guesses will be null or some nullGuess that extends Guess.
+
 	
 	//GUESSING:
 	/**
@@ -141,18 +124,22 @@ public class Player implements KeyListener{
 	 * the other players
 	 * @return the guess that this player has made OR NULL IF NO GUESS MADE
 	 */
-	public Guess decideGuess(){
+	public Guess decideGuess(RoomCard.Room roomGuesserIn){
 		//give the player their options
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("Your moving is over and now you can elect to make a guess or an accusation... \n");
 		System.out.println("press 1 for no guess, 2 for guess and 3 for accusation");
 		//decide which kind of guess
 		boolean isAccusation = false;
-		if(keyboard.nextInt() == 1){
+		int temp = keyboard.nextInt();
+		if(temp == 1){
 			return null; //!!! null as a value
-		}else if(keyboard.nextInt() == 2){
+		}else if(temp == 2){
+			if(roomGuesserIn == null){
+				return null;//!!! they cant guess if they are in the hallway
+			}
 			isAccusation = false;
-		}else if(keyboard.nextInt() == 3){
+		}else if(temp == 3){
 			isAccusation = true;
 		}else{
 			throw new RuntimeException("that input is not an allowed type of accusation");
@@ -160,16 +147,19 @@ public class Player implements KeyListener{
 		//prompt the player to guess which three "suspects" they wish to guess
 		//build a card from each suspect enum that is chosen
 		//get guessed character
-		System.out.println("choose a character to guess: 1 -6 for characters");
+		System.out.println("enter a number to choose which character to guess: 1 for miss scarlet, 2 for mrs white, 3 for mrs peacock, 4 for professor plum, 5 for mr green, 6 for colonel mustard");
 		CharacterCard.Character guessedChar = CharacterCard.intToCharacter.get(keyboard.nextInt());
+		System.out.println("you chose " + guessedChar.getString());
 		CharacterCard guessedCharCard = new CharacterCard(guessedChar);
 		//get guessed location
-		System.out.println("choose a room to guess: 1 - 9 for rooma");
+		System.out.println("enter a number to choose which room to guess: 1 for ballroom, 2 for billiard rooom, 3 for conservatory, 4 for dining room, 5 for hall, 6 for kitchen, 7 for library, 8 for lounge, 9 for study");
 		RoomCard.Room guessedRoom = RoomCard.intToRoom.get(keyboard.nextInt());
+		System.out.println("you chose " + guessedRoom.getString());
 		RoomCard guessedRoomCard = new RoomCard(guessedRoom);
 		//get guessed weapon
-		System.out.println("choose a weapon to guess: 1 - 8 for weapons");
+		System.out.println("enter a number to choose which weapon to guess: 1 for axe, 2 for candlestick, 3 for knife, 4 for lead pipe, 5 for poison, 6 for revolver, 7 for rope, 8 for wrench");
 		WeaponCard.Weapon guessedWeapon = WeaponCard.intToWeapon.get(keyboard.nextInt());
+		System.out.println("you chose " + guessedWeapon.getString());
 		WeaponCard guessedWeaponCard = new WeaponCard(guessedWeapon);
 		//create a guess/final guess with the guessed cards provided
 		//pass the guess back to the runGame method so that its weapon can be drawn on the board and
@@ -211,7 +201,7 @@ public class Player implements KeyListener{
 		//which one they want to refute with
 		Scanner keyboard = new Scanner(System.in);
 		for(int i = 0; i < refutationCards.size(); i ++){
-			System.out.println("to refute with : " + refutationCards.get(i) + " enter the number " + i );
+			System.out.println(this.playerName + ": to refute with : " + refutationCards.get(i).toString() + " enter the number " + i );
 		}
 		//now get the user's input to decide which card we will refute with
 		Card cardRefute = refutationCards.get(keyboard.nextInt());
@@ -268,18 +258,13 @@ public PlayerTile getTile(){
 	return this.playerTile;
 }
 
-//RUBBISH
-@Override
-public void keyPressed(KeyEvent e) {
-	//NOT USED BUT NECESSARY TO OVERRIDE THIS METHOD WHEN IMPLEMENTING KEYLISTENER
-}
-@Override
-public void keyTyped(KeyEvent e) {
-	//NOT USED BUT NECESSARY TO OVERRIDE THIS METHOD WHEN IMPLEMENTING KEYLISTENER
+public void loseGame(){
+	this.hasLost = true;
 }
 
-
-
+public boolean hasLost(){
+	return this.hasLost;
+}
 	
 	
 }

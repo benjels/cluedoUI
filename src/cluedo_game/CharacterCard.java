@@ -19,12 +19,30 @@ public class CharacterCard implements Card {
 	}
 
 
+	@Override
+	 public boolean equals(Object o){
+	  if(o instanceof CharacterCard){
+	   CharacterCard card = (CharacterCard)o;
+	   return card.character.equals(this.character);
+	  }
+	  return false;
+	 }
+	
+	@Override
+	 public int hashCode(){
+	  return this.character.hashCode();
+	 }
+	
+	@Override
+	public String toString(){
+		return "Character Card: " + character.characterName;
+	}
 	
 	// ENUM FOR UNIQUE CHARACTERS
 	public enum Character {
-		MISSSCARLET("miss scarlet", 8, 24, 's'), MRSWHITE("mrs. white", 10, 0, 'w'), MRSPEACOCK(
-				"mrs peacock", 24, 6, 'm'), PROFESSORPLUM("professor plum", 24, 19, 'p'), MRGREEN("mr green", 15, 0, 'g'), COLONELMUSTARD(
-				"colonel mustard", 1, 17, 'm');
+		MISSSCARLET("miss scarlet", 8, 24, '?'), MRSWHITE("mrs. white", 10, 0, '!'), MRSPEACOCK(
+				"mrs peacock", 24, 6, '&'), PROFESSORPLUM("professor plum", 24, 19, '!'), MRGREEN("mr green", 15, 0, '$'), COLONELMUSTARD(
+				"colonel mustard", 1, 17, '@');
 		
 		//each character card has one of these enums as an identifier of which weapon it actually is. These enums also hold a string which is 
 		//just a more readable/user friendly name for that enum value. This is stored in the characterName String field.
@@ -35,6 +53,7 @@ public class CharacterCard implements Card {
 		//we give each character a unique ascii char to represent this character on the game board
 		private char icon;
 	
+		
 		private Character(String character, int x, int y, char icon) {
 			this.characterName = character;
 			this.startX = x;

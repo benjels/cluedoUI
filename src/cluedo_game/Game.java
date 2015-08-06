@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -31,11 +32,11 @@ public class Game {
 	private ArrayList<Player> players = new ArrayList<>();
 	// the "deck" of cards which is always the same
 	private final ArrayList<Card> deck;
-	//the three cards that, when they are accused, win the game
-	//contains one card of each type 
-	//Note that it is actually not necessary to access these cards because
-	//we can prove that a guess is correct by verifying that none of the 
-	//other players can disprove that guessaaaaa
+	// the three cards that, when they are accused, win the game
+	// contains one card of each type
+	// Note that it is actually not necessary to access these cards because
+	// we can prove that a guess is correct by verifying that none of the
+	// other players can disprove that guessaaaaa
 	private final ArrayList<Card> winningCards;
 
 	/**
@@ -71,58 +72,73 @@ public class Game {
 						RoomCard.Room.LOUNGE),
 				new RoomCard(RoomCard.Room.STUDY)));
 		assert (deck.size() == (9 + 8 + 6)) : "made an error when forming deck its the worng size";
+		//shuffle the cards
+		Collections.shuffle(deck);
 		// create players with correct names/characters
 		Scanner keyboard = new Scanner(System.in);
+
 		System.out.println("ENTER PLAYER AMOUNT \n");
 		int playerAmount = keyboard.nextInt();
+		while(playerAmount < 2 || playerAmount > 6){
+			playerAmount = keyboard.nextInt();
+			System.out.println("enter an amount of players between 1 and 6");
+		}
+		HashSet<CharacterCard.Character> chosenCharacters = new HashSet<>();
 		for (int i = 0; i < playerAmount; i++) {
 			// get this player's name
 			System.out.println("Player " + (i + 1)
 					+ " please enter your name \n");
 			String name = keyboard.next();
 			// let this player choose a character
-			System.out
-					.println(name
-							+ " please choose your character by entering the corresponding number: \n 1 = miss scarlet \n 2 = mrs. white \n 3 = mrs peacock \n 4 = professor plum \n 5 = mr green \n 6 = colonel mustard");
-			int character = keyboard.nextInt(); 
+			CharacterCard.Character playersChar = null;
+			while(chosenCharacters.contains(playersChar) || playersChar == null){
+			System.out.println(name+ " please choose your character by entering the corresponding number: \n 1 = miss scarlet \n 2 = mrs. white \n 3 = mrs peacock \n 4 = professor plum \n 5 = mr green \n 6 = colonel mustard");
+			System.out.println("you cannot choose the characters that have already been chosen which are:");
+			for(Player each: this.players){//print out taken players
+				System.out.println(each.getTile().getCharacter().getString());
+			}
+			int character = keyboard.nextInt();
 			// create this character's tile and then create this player's Player
 			// object
-			CharacterCard.Character playersChar = CharacterCard.intToCharacter
-					.get(character);
+			 playersChar = CharacterCard.intToCharacter.get(character);
+			}
 			PlayerTile tile = new PlayerTile(playersChar);
+			chosenCharacters.add(playersChar);
 			// finally create the actual Player with the tile/name and add it to
 			// player list
 			Player currentPlayer = new Player(name, tile, this);
 			this.players.add(currentPlayer);
 		}
-		//before we deal the cards to the players we should get one card of each type
-		//and store these as the winning combination
+		// before we deal the cards to the players we should get one card of
+		// each type
+		// and store these as the winning combination
 		boolean weapFound = false;
 		boolean roomFound = false;
 		boolean charFound = false;
 		WeaponCard weap = null;
 		RoomCard room = null;
 		CharacterCard chara = null;
-		for(int i = 0; i < deck.size(); i ++){
-			if((deck.get(i) instanceof WeaponCard) && (!weapFound)){
-				//then we found murder weapon
+		for (int i = 0; i < deck.size(); i++) {
+			if ((deck.get(i) instanceof WeaponCard) && (!weapFound)) {
+				// then we found murder weapon
 				weap = (WeaponCard) deck.get(i);
 				weapFound = true;
 			}
-			if((deck.get(i) instanceof RoomCard) && (!roomFound)){
-				//then we found murder location
+			if ((deck.get(i) instanceof RoomCard) && (!roomFound)) {
+				// then we found murder location
 				room = (RoomCard) deck.get(i);
 				roomFound = true;
 			}
-			if((deck.get(i) instanceof CharacterCard) && (!charFound)){
-				//then we found murderer
+			if ((deck.get(i) instanceof CharacterCard) && (!charFound)) {
+				// then we found murderer
 				chara = (CharacterCard) deck.get(i);
 				charFound = true;
 			}
 		}
-		//we now have one card of each kind then put them aside
-		this.winningCards = new ArrayList<Card>(Arrays.asList(weap, room, chara));
-		//and delete them from the deck
+		// we now have one card of each kind then put them aside
+		this.winningCards = new ArrayList<Card>(
+				Arrays.asList(weap, room, chara));
+		// and delete them from the deck
 		this.deck.removeAll(Arrays.asList(weap, room, chara));
 		// now we deal cards from deck to players
 		// essentially we traverse the deck of cards and proceed to a new player
@@ -167,48 +183,78 @@ public class Game {
 	}
 
 	/**
-	 * goes through the list of players prompting them for their moves/guesses
-	 * until the game is won/finished.
-	 * 
-	 * interfaces with the board when the player attempts to move, both to make
-	 * sure that an attempted/desired move is legal AND to update the visual
-	 * representation of the game.
-	 * 
-	 * interfaces with the players when a guess has been made and we need to
-	 * check possible refutations from the other players.
-	 */
-	private void runGame() {
-		boolean gameOver = false;
-		// just loop through the players' turns until the game is over (moving then guessing)
-		while (!gameOver) {
-			for (Player eachPlayer : this.players) {
-				// first roll the dice
-				Random ran = new Random();
-				int diceRoll = ran.nextInt(5) + 1;
-				// give the distance that this player rolled to the players
-				// decideMove
-				eachPlayer.decideMove(diceRoll);
-				// now the player has expended all of their moves, so we need to
-				// check if
-				// they want to make a guess or an accusation (or neither)
-				Guess playerGuess = eachPlayer.decideGuess();
-				if (playerGuess != null) {//if player made a guess or accusation
-					// pass the guess to the board so the weapon can be drawn in that room
-					this.board.placeGuess(playerGuess);
-					//check if this guess is refutable/winning guess and if it is refutable,
-					//make a player refute it
-					checkGuess(playerGuess);
-					// pass the guess to the board so the weapon can be erased from
-					//the room it was put in whilst this guess was taking place
-					this.board.removeGuess(playerGuess);
-					// now its the next player's turn
-				}else{//in case that the player elected not to make a guess
-					System.out.println("ok going to the next player because no guess made... for debuggg");
-				}
-			}
-		}
-		System.out.println("GAME OVER");
-	}
+     * goes through the list of players prompting them for their moves/guesses
+     * until the game is won/finished.
+     *
+     * interfaces with the board when the player attempts to move, both to make
+     * sure that an attempted/desired move is legal AND to update the visual
+     * representation of the game.
+     *
+     * interfaces with the players when a guess has been made and we need to
+     * check possible refutations from the other players.
+     */
+    private void runGame() {
+
+            boolean gameOver = false;
+            // just loop through the players' turns until the game is over (moving
+            // then guessing)
+            while (!gameOver) {
+                    for (Player eachPlayer : this.players) {
+
+                            if (eachPlayer.hasLost()) {
+                                    continue;
+                            }
+
+                            // first roll the dice
+                            Random ran = new Random();
+                            int diceRoll = ran.nextInt(5) + 1;
+                            // give the distance that this player rolled to the players
+                            // decideMove
+                            eachPlayer.decideMove(diceRoll);
+                            System.out.println("rolled a : " + diceRoll);
+                            // now the player has expended all of their moves, so we need to
+                            // check if
+                            // they want to make a guess or an accusation (or neither)
+
+                            Guess playerGuess = null;
+
+                            if(board.getRoom(eachPlayer.getTile()) != null) {
+                                    System.out.println("You are in room: "
+                                                    + (board.getRoom(eachPlayer.getTile()).name()));
+                            }
+                           
+                            playerGuess = eachPlayer.decideGuess(board.getRoom(eachPlayer.getTile()));
+
+                            if (playerGuess != null
+                                            && !playerGuess.isFinal && !board.getRoom(eachPlayer.getTile()).equals(
+                                                            playerGuess.roomCard.room)) {
+                                    System.out
+                                                    .println("You are not in the room you are guessing.  Bad move!");
+                                    continue;
+                            }
+
+                            if (playerGuess != null) {// if player made a guess or
+                                                                                    // accusation
+                                    // pass the guess to the board so the weapon can be drawn in
+                                    // that room
+                                    this.board.placeGuess(playerGuess);
+                                    // check if this guess is refutable/winning guess and if it
+                                    // is refutable,
+                                    // make a player refute it
+                                    checkGuess(playerGuess);
+                                    // pass the guess to the board so the weapon can be erased
+                                    // from
+                                    // the room it was put in whilst this guess was taking place
+                                    this.board.removeGuess(playerGuess);
+                                    // now its the next player's turn
+                            } else {// in case that the player elected not to make a guess
+                                    System.out
+                                                    .println("ok going to the next player because no guess made or else you attempted to make a guess but you are in the wrong position");
+                            }
+                    }
+            }
+            System.out.println("GAME OVER");
+    }
 
 	// !!!REMEMBER THAT THERE ARE 2 GAME OVER CONDITIONS
 	// 1) A PLAYER GUESSES CORRECT CARD COMBINATION
@@ -230,6 +276,7 @@ public class Game {
 	public PlayerTile sendMove(PlayerTile movingTile, Board.Direction dir) {
 		// check with the canmove whether the desired move is valid
 		if (!this.board.canMove(movingTile, dir)) {
+			System.out.println("cant move");
 			// in the case that we can't make the move because of e.g. a wall
 			return movingTile;
 		} else {// in the case that requested move is valid
@@ -242,19 +289,21 @@ public class Game {
 	 * it can be given to all the players so that they can potentially refute
 	 * this guess.
 	 * 
-	 * @param guess the guess that we will check the refutability of andattempt to find a player to refute
+	 * @param guess
+	 *            the guess that we will check the refutability of andattempt to
+	 *            find a player to refute
 	 */
 	private void checkGuess(Guess guess) {
 		// get the first player in the list who can refute
 		Player refuter = null;
 		for (Player eachPlayer : this.players) {
-			if (eachPlayer.canRefute(guess)) {
+			if (eachPlayer.canRefute(guess) && !(eachPlayer.playerName.equals(guess.getPlayer().playerName))) {
 				refuter = eachPlayer;
 				break;
 			}
 		}
 		// deal with case where guess was correct/nobody can refute
-		if (refuter == null) {
+		if (this.winningCards.contains(guess.characterCard) && this.winningCards.contains(guess.roomCard) && this.winningCards.contains(guess.weaponCard)) {
 			if (guess.isFinal) {// then the guessing player just won the game
 				System.out.println("CONGRATS YOU WON: "
 						+ guess.getPlayer().playerName);
@@ -262,9 +311,18 @@ public class Game {
 			} else {
 				System.out.println("no players can refute this combination");
 			}
-		} else {// in likely case that at least one player can refute the guess
+		} else if(refuter != null) {// in likely case that at least one player can refute the guess
 				// call the refuteGuess() method in that player
 			refuter.refuteGuess(guess);
+			//if it was a final guess that was just refuted we should make that player lose
+			guess.getPlayer().loseGame();
+			System.out.println("YOU LOST: "+ guess.getPlayer().playerName);
+		}else if(guess.isFinal){
+		System.out.println("YOU LOST "+ guess.getPlayer().playerName);
+		//make this player unmoving
+		guess.getPlayer().loseGame();
+		}else{ //in the case that it is a null/player guessed own cards
+			System.out.println("no players can refute this combination");
 		}
 
 	}

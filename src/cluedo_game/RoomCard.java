@@ -17,7 +17,25 @@ public class RoomCard implements Card {
 		this.room = room;
 	}
 
-
+	@Override
+	 public boolean equals(Object o){
+	  if(o instanceof RoomCard){
+	   RoomCard card = (RoomCard)o;
+	   return card.room.equals(this.room);
+	  }
+	  return false;
+	 }
+	
+	@Override
+	 public int hashCode(){
+	  return this.room.hashCode();
+	 }
+	
+	@Override
+	public String toString(){
+		return "Room Card: " + room.roomName;
+	}
+	
 	
 	// ENUM FOR UNIQUE ROOMS
 	public enum Room {
@@ -38,6 +56,8 @@ public class RoomCard implements Card {
 			return this.roomName;
 		}
 	}
+	
+	
 	
 	
 	//HASHMAP FROM INT --> ROOM ENUM

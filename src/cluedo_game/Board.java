@@ -124,53 +124,68 @@ public class Board {
 		for(Player p : players){
 			tiles[p.getTile().getX()][p.getTile().getY()] = p.getTile();
 		}
-		
+		draw();
 	}
 
 	/**
-	 * Checks if a player at the given tile can move in Direction dir.  
-	 * @param tile Tile to check
-	 * @param dir Direction you want the tile to move in
-	 * @return True if the move is possible ie if there is nothing in the way
-	 */
-	public boolean canMove(Tile tile, Direction dir){
-		
-		//First, get the tile in direction dir
-		Tile dest = getTileInDirection(tile, dir);
-		
-		if(dest == null){
-			return false;
-		}
-		
-		if(dest instanceof RoomTile){
-			//If we're standing on a door, let us into the room..
-			if(originalBoard[tile.getX()][tile.getY()] instanceof DoorTile){
-				return true;
-			}
-			
-			//If not, check whether we are surrounded by atleast 3 room tiles.
-			int count = 0;
-			for(Tile t : getTilesSurrounding(tile)){
-				if(t instanceof RoomTile){
-					count++;
-				}
-			}
-			return count >= 3;
-		}
-		
-		if(dest instanceof HallTile){
-			return true;
-		}
-		
-		if(dest instanceof DoorTile){
-			DoorTile door = (DoorTile)dest;
-			if(door.getDirection().equals(dir.getOpposite())){
-				return true;
-			}
-		}
-		
-		return false; 
-	}
+     * Checks if a player at the given tile can move in Direction dir.  
+     * @param tile Tile to check
+     * @param dir Direction you want the tile to move in
+     * @return True if the move is possible ie if there is nothing in the way
+     */
+    public boolean canMove(Tile tile, Direction dir){
+            System.out.println(tile.getX() + " , " + tile.getY());
+            //First, get the tile in direction dir
+            Tile dest = getTileInDirection(tile, dir);
+           
+           
+           
+            if(dest == null){
+           
+                    return false;
+            }
+           
+            System.out.println(dest.getClass().getName());
+           
+            if(dest instanceof RoomTile){
+   
+                    //If we're standing on a door, let us into the room..
+                    if(originalBoard[tile.getX()][tile.getY()] instanceof DoorTile){
+                            return true;
+                    }
+                   
+                    if(originalBoard[tile.getX()][tile.getY()] instanceof RoomTile){
+                            return true;
+                    }
+                   
+                    //If not, check whether we are surrounded by atleast 3 room tiles.
+                    //int count = 0;
+                    //for(Tile t : getTilesSurrounding(tile)){
+                    //      if(t instanceof RoomTile){
+                    //              count++;
+                    //      }
+                    //}
+                    //System.out.println("Count >= 3? : " + (count>=3));
+                    //return count >= 3;
+            }
+           
+            if(dest instanceof HallTile){
+                    if(originalBoard[tile.getX()][tile.getY()] instanceof RoomTile){
+                            return false;
+                    }
+                    return true;
+            }
+           
+            if(dest instanceof DoorTile){
+
+                    DoorTile door = (DoorTile)dest;
+                    if(door.getDirection().equals(dir.getOpposite())){
+                            return true;
+                    }
+            }
+
+            return false;
+    }
 
 	/**
 	 * Moves the specified tile in the given direction.  This method DOES NOT perform any checks to 
@@ -183,26 +198,28 @@ public class Board {
 	 * @param dir
 	 * @return
 	 */
-	public Tile move(Tile tile, Direction dir){
-		
-		int oldX = tile.getX();
-		int oldY = tile.getY();
-		int destX = tile.getX()+dir.x;
-		int destY = tile.getY()+dir.y;
-		
-		//Buffer the old tiles..
-		Tile current = tiles[oldX][oldY];
-		
-		//Now swap them over
-		tiles[destX][destY] = current;
-		if(originalBoard[oldX][oldY] instanceof PlayerTile){
-			tiles[oldX][oldY] = new HallTile(oldX, oldY);
-		} else {
-			tiles[oldX][oldY] = originalBoard[oldX][oldY];
-		}
-		
-		return tiles[destX][destY]; //TODO
-	}
+	public PlayerTile move(PlayerTile tile, Direction dir){
+        
+        int oldX = tile.getX();
+        int oldY = tile.getY();
+        int destX = tile.getX()+dir.x;
+        int destY = tile.getY()+dir.y;
+       
+        //Buffer the old tiles..
+        Tile current = tiles[oldX][oldY];
+       
+        //Now swap them over
+        tiles[destX][destY] = current;
+        if(originalBoard[oldX][oldY] instanceof PlayerTile){
+                tiles[oldX][oldY] = new HallTile(oldX, oldY);
+        } else {
+                tiles[oldX][oldY] = originalBoard[oldX][oldY];
+        }
+       
+        draw();
+       
+        return new PlayerTile(tile.getCharacter(), tile.getIcon(), destX, destY); //TODO
+}
 	
 	/**
 	 * Gets all tiles surrounding Tile t
@@ -255,12 +272,16 @@ public class Board {
 			for(int y = 0; y < tiles[x].length; y++){
 				if(tiles[x][y] instanceof RoomTile){
 					RoomTile tile = (RoomTile)tiles[x][y];
+					if(tile.getIcon().equals("SP")){
+					      continue;
+					     }
 					if(tile.getRoom().equals(r)){
 						tiles[x][y] = new WeaponTile(guess.weaponCard.weapon, "^-", x, y);
 					}
 				}
 			}
 		}
+		draw();
 	}
 	
 	/**
@@ -276,7 +297,7 @@ public class Board {
 				}
 			}
 		}
-		
+		draw();
 	}
 
 	/**
@@ -299,7 +320,7 @@ public class Board {
 	/**
 	 * Outputs a text based drawing of the board, including rooms and characters.
 	 */
-	public void draw(){
+	private void draw(){
 		for(int y = 0; y < tiles.length; y++){
 			for(int x = 0; x < tiles[y].length; x++){
 				if(tiles[x][y] == null){
