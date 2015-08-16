@@ -127,6 +127,65 @@ public class Board {
 		draw();
 	}
 
+	
+	
+	/**
+	 * Checks if we can move from tile start to tile end.
+	 * This method is for one tile at a time moving - NOT FOR PATHFINDING.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public boolean canMove(Tile tile, Tile dest){
+		 if(dest == null){
+	           
+             return false;
+     }
+    
+     if(dest instanceof RoomTile){
+
+             //If we're standing on a door, let us into the room..
+             if(originalBoard[tile.getX()][tile.getY()] instanceof DoorTile){
+                     return true;
+             }
+            
+             if(originalBoard[tile.getX()][tile.getY()] instanceof RoomTile){
+                     return true;
+             }
+            
+             //If not, check whether we are surrounded by atleast 3 room tiles.
+             //int count = 0;
+             //for(Tile t : getTilesSurrounding(tile)){
+             //      if(t instanceof RoomTile){
+             //              count++;
+             //      }
+             //}
+             //System.out.println("Count >= 3? : " + (count>=3));
+             //return count >= 3;
+     }
+    
+     if(dest instanceof HallTile){
+             if(originalBoard[tile.getX()][tile.getY()] instanceof RoomTile){
+                     return false;
+             }
+             return true;
+     }
+    
+     if(dest instanceof DoorTile){
+
+             DoorTile door = (DoorTile)dest;
+             Tile facing = this.getTileInDirection(door, door.getDirection());
+             if(facing.getX() == tile.getX() && facing.getY() == tile.getY()){
+                     return true;
+             }
+            if(tile instanceof RoomTile){
+            	return true;
+            }
+     }
+
+     return false;
+	}
+	
 	/**
      * Checks if a player at the given tile can move in Direction dir.  
      * @param tile Tile to check
@@ -365,6 +424,10 @@ public class Board {
 			return opposite;
 		}
 		
+	}
+
+	public Tile[][] getTiles() {
+		return tiles;
 	}
 
 }

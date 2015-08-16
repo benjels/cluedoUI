@@ -1,9 +1,6 @@
 package cluedo_ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -11,6 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicBorders;
+
+import cluedo_game.Board;
 
 /**
  * the frame for the standard cluedo board that is 
@@ -26,10 +25,9 @@ import javax.swing.plaf.basic.BasicBorders;
 public class CluedoFrame extends JFrame{
 
 	
-	
 	//TODO: WILL ALMOST CERTAINLY NEED TO MAKE MY OWN VERSIONS OF THE PLAYERPANEL AND BOARDPANEL JPANELS BUT TRY WITHOUT
 	
-	public CluedoFrame(Dimension contentPanePrefSize){
+	public CluedoFrame(Board board, Dimension contentPanePrefSize){
 		super();
 		//CREATE ACONTENT PANE THAT ALL THE OTHER COMPONENETS ARE ADDED TO
 		//this is because it is nicer to work with a content pane that is a JComponent rather than
@@ -46,7 +44,7 @@ public class CluedoFrame extends JFrame{
 		this.setJMenuBar(new CluedoGameMenuBar());
 	
 		//CREATE MAIN GAME PANEL AND ADD IT TO THE CONTENT PANE
-		BoardPanel boardPanel = new BoardPanel((int)contentPane.getPreferredSize().getWidth(),
+		BoardPanel boardPanel = new BoardPanel(board, (int)contentPane.getPreferredSize().getWidth(),
 				(int)(contentPane.getPreferredSize().getHeight()*0.7f) );
 		
 		
@@ -70,7 +68,7 @@ public class CluedoFrame extends JFrame{
 
 			@Override
 			public void run() {
-				CluedoFrame frame = new CluedoFrame(new Dimension(560, 800));
+				CluedoFrame frame = new CluedoFrame(null, new Dimension(560, 800));
 			}
 			
 		});
