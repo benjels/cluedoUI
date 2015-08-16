@@ -1,13 +1,15 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+package cluedo_ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicBorders;
 
 /**
@@ -27,15 +29,16 @@ public class CluedoFrame extends JFrame{
 	
 	//TODO: WILL ALMOST CERTAINLY NEED TO MAKE MY OWN VERSIONS OF THE PLAYERPANEL AND BOARDPANEL JPANELS BUT TRY WITHOUT
 	
-	CluedoFrame(Dimension contentPanePrefSize){
+	public CluedoFrame(Dimension contentPanePrefSize){
+		super();
 		//CREATE ACONTENT PANE THAT ALL THE OTHER COMPONENETS ARE ADDED TO
 		//this is because it is nicer to work with a content pane that is a JComponent rather than
 		//just a Container which it is by default
 		//!!! note that from now on when we call add/remove/setLayout on this frame, it will actually call
-		//those methods on this "all encompassing" Jpanel "cpntent pane"
+		//those methods on this "all encompassing" JPanel "content pane"
 		JPanel contentPane = new JPanel();
 		contentPane.setPreferredSize(contentPanePrefSize);
-		contentPane.setLayout(new GridLayout());//!!! i think that the layout of the content pane may be causing the panes to be on top of each other???
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));//!!! i think that the layout of the content pane may be causing the panes to be on top of each other???
 		contentPane.setBorder(new BasicBorders.MarginBorder());
 		this.setContentPane(contentPane);
 		
@@ -43,20 +46,34 @@ public class CluedoFrame extends JFrame{
 		this.setJMenuBar(new CluedoGameMenuBar());
 	
 		//CREATE MAIN GAME PANEL AND ADD IT TO THE CONTENT PANE
-		this.add(new BoardPanel(this.getContentPane().getWidth(),(int)(this.getContentPane().getHeight()/1.3f) ), 0); 
+		BoardPanel boardPanel = new BoardPanel((int)contentPane.getPreferredSize().getWidth(),
+				(int)(contentPane.getPreferredSize().getHeight()*0.7f) );
 		
+		
+		PlayerPanel playerPanel = new PlayerPanel((int)contentPane.getPreferredSize().getWidth(),
+				(int)(contentPane.getPreferredSize().getHeight() - contentPane.getPreferredSize().getHeight()*0.7f));
+		
+		this.add(boardPanel); 
+		add(Box.createVerticalGlue());
 		//CREATE THE PLAYER INFO PANEL AND ADD IT TO THE CONTENT PANE
-		this.add(new PlayerPanel(this.getContentPane().getWidth(), (int)(this.getContentPane().getHeight() - this.getContentPane().getHeight()/1.3f)), 1); //player pane is part of frame's content pane
+		this.add(playerPanel); //player pane is part of frame's content pane
 		
 		//FINALLY PACK/DISPLAY THE FRAME AND ITS CONTENT PANE (AND CONSEQUENTLY EVERYTHING IN THIS DISPLAY)
 		this.pack();
-		this.setVisible(true);
+		this.setVisible(true);	
 	}
 	
 	
 	//DUMMY MAIN METHOD FOR JUST LOOKING AT OUR UI
 	public static void main(String[] args){
-		new CluedoFrame(new Dimension(800, 800));
+		SwingUtilities.invokeLater(new Runnable(){
+
+			@Override
+			public void run() {
+				CluedoFrame frame = new CluedoFrame(new Dimension(560, 800));
+			}
+			
+		});
 	}
 	
 	

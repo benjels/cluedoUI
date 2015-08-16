@@ -101,7 +101,7 @@ public class Board {
 				case 'S' : t = new DoorTile(Direction.SOUTH, x, y);break;
 				case 'W' : t = new DoorTile(Direction.WEST, x, y);break;
 				
-				case 'P' : t = new PortalTile("Po", x, y);break;
+				//case 'P' : t = new PortalTile("Po", x, y);break;
 				
 				case 'H' : t = new HallTile(x, y); break;
 				
